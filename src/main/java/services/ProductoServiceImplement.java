@@ -1,6 +1,12 @@
 // Define el paquete donde se encuentra esta clase
 package services;
-
+/*
+ * Autor: Judith Piedra
+ * Fecha: 07/11/2025
+ * Descripción: Esta clase denominada ProductoServiceImplement,
+ * implementa  la interfaz de ProductoService
+ *
+ */
 // Importa la clase Producto del paquete models
 import models.Producto;
 // Importa la clase Arrays de java.util para crear listas rápidamente

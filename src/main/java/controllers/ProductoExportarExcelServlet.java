@@ -1,6 +1,12 @@
 // Define el paquete donde se encuentra esta clase (controladores)
 package controllers;
-
+/*
+ * Autor: Judith Piedra
+ * Fecha: 07/11/2025
+ * Descripción: Esta clase denominada ProductoExportarExcelServlet,
+ * es una clase hija de HttpServlet
+ * y modela el servlet para poder generar el archivo excel
+ */
 // Importa la clase ServletException del API de Jakarta Servlet
 import jakarta.servlet.ServletException;
 // Importa la anotación WebServlet para mapear el servlet a una URL

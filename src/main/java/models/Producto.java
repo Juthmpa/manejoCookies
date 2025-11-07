@@ -1,5 +1,14 @@
 // Define el paquete donde se encuentra esta clase
 package models;
+/*
+ * Autor: Judith Piedra
+ * Fecha: 07/11/2025
+ * Descripción: Esta clase denominada Producto,
+ * modela el producto que tiene sus atributos:
+ * idProducto, nombre, categoria, precio
+ * con su contructor sin parámetros y con parámetros
+ * sus métodos Getter y Setter
+ */
 
 // Define la clase pública Producto
 public class Producto {
@@ -12,10 +21,15 @@ public class Producto {
     // Declaramos la variable para el precio del producto (tipo Double)
     private Double precio;
 
-    // Define el constructor vacío (por defecto) de la clase Producto
+    // Define el constructor vacío de la clase Producto
     public Producto(){}
 
-    // Define el constructor que inicializa todos los campos de la clase Producto
+    /* Constructor que inicializa todos los campos de la clase Producto
+     * @param idProducto Parámetro que identifica al producto
+     * @param nombre Parámetro que tiene el detalle del producto
+     * @param categoria Parámetro que indica el tipo de producto
+     * @param precio Parámetro que indica el valor de venta del producto
+     */
     public Producto(Long idProducto, String nombre,
                     String categoria, Double precio){
         // Asigna el valor del parámetro 'idProducto' a la variable de instancia 'this.idProducto'

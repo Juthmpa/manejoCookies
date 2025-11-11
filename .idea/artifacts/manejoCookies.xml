@@ -6,6 +6,9 @@
         <element id="directory" name="classes">
           <element id="module-output" name="manejoCookies" />
         </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1" />
+        </element>
       </element>
       <element id="javaee-facet-resources" facet="manejoCookies/web/Web" />
     </root>

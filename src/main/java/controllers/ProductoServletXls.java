@@ -17,6 +17,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 // Importa la clase HttpServletResponse para manejar la respuesta HTTP
 import jakarta.servlet.http.HttpServletResponse;
+// Importa la clase Cookie para manejar las cookies
+import jakarta.servlet.http.Cookie;
 // Importa la clase Producto del paquete models
 import models.Producto;
 // Importa la interfaz ProductoService del paquete services
@@ -30,82 +32,115 @@ import java.io.IOException;
 import java.io.PrintWriter;
 // Importa la interfaz List de java.util
 import java.util.List;
+// Importa la interfaz Optional de java.util
+import java.util.Optional;
+// Importa la interfaz Arrays de java.util
+import java.util.Arrays;
 
 // Mapea este Servlet a la URL "/producto"
 @WebServlet("/producto")
-// Define la clase ProductoServletXls que extiende de HttpServlet
 public class ProductoServletXls extends HttpServlet {
 
-    // Sobrescribe el métodos doGet para manejar las peticiones HTTP GET
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
 
-        // Crea una instancia de la implementación del servicio de productos
+        // Instancia del servicio de productos
         ProductoService service = new ProductoServiceImplement();
-        // Llama al métodos listar() del servicio para obtener la lista de productos
         List<Producto> productos = service.listar();
 
-        // Establece el tipo de contenido de la respuesta como HTML y define la codificación UTF-8
+        // Verificar cookie de sesión
+        Cookie[] cookies = req.getCookies() != null ? req.getCookies() : new Cookie[0];
+        Optional<String> usuario = Arrays.stream(cookies)
+                .filter(c -> "username".equals(c.getName()))
+                .map(Cookie::getValue)
+                .findAny();
+
+        // Establece tipo de contenido HTML con codificación UTF-8
         resp.setContentType("text/html; charset=UTF-8");
-        // Abre un bloque try-with-resources para asegurar que el PrintWriter se cierre automáticamente
-        try(PrintWriter out = resp.getWriter()) {
-            // Comienza a generar la respuesta HTML
-            // Escribe la etiqueta de apertura del elemento html
-            out.println("<html>");
-            // Escribe la etiqueta de apertura del elemento head
+
+        try (PrintWriter out = resp.getWriter()) {
+
+            // Comienza a generar la respuesta HTML con Bootstrap
+            out.println("<!DOCTYPE html>");
+            out.println("<html lang='es'>");
             out.println("<head>");
-            // CORRECCIÓN: Escribe la metaetiqueta charset completa con sus corchetes angulares
-            out.println("<meta charset=\"UTF-8\">");
-            // Escribe el título de la página
+            out.println("<meta charset='UTF-8'>");
+            out.println("<meta name='viewport' content='width=device-width, initial-scale=1'>");
             out.println("<title>Lista de Productos</title>");
-            // Escribe la etiqueta de cierre del elemento head
+            out.println("<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet'>");
             out.println("</head>");
-            // Escribe la etiqueta de apertura del elemento body
-            out.println("<body>");
-            // Escribe un encabezado principal
-            out.println("<h1>Lista de productos</h1>");
+            out.println("<body class='bg-light'>");
 
-            // CORRECCIÓN: Escribe la etiqueta de apertura del elemento table completa
-            out.println("<table>");
-            // Escribe la etiqueta de apertura de una fila de tabla (encabezado)
+            // Contenedor principal
+            out.println("<div class='container mt-5'>");
+            out.println("<div class='card shadow-lg'>");
+            out.println("<div class='card-header bg-success text-white text-center'>");
+            out.println("<h2 class='mb-0'>Lista de Productos</h2>");
+            out.println("</div>");
+            out.println("<div class='card-body'>");
+
+            // Tabla de productos
+            out.println("<div class='table-responsive'>");
+            out.println("<table class='table table-bordered table-hover align-middle'>");
+            out.println("<thead class='table-success text-center'>");
             out.println("<tr>");
-            // Escribe la celda de encabezado para el ID del producto
             out.println("<th>ID PRODUCTO</th>");
-            // Escribe la celda de encabezado para el nombre
             out.println("<th>NOMBRE</th>");
-            // Escribe la celda de encabezado para la categoría
-            out.println("<th>CATEGORIA</th>");
-            // Escribe la celda de encabezado para el precio
-            out.println("<th>PRECIO</th>");
-            // CORRECCIÓN: Cierra la fila de encabezado
+            out.println("<th>CATEGORÍA</th>");
+            if (usuario.isPresent()) {
+                out.println("<th>PRECIO</th>");
+            }
             out.println("</tr>");
+            out.println("</thead>");
+            out.println("<tbody>");
 
-            // Lleno mi tabla con los productos recorriendo la lista
-            productos.forEach(p->{
-                // Abre una nueva fila de tabla para el producto actual
-                out.print("<tr>");
-                // Escribe el ID del producto en una celda
-                out.println("<td>" + p.getIdProducto() + "</td>");
-                // Escribe el nombre del producto en una celda
+            for (Producto p : productos) {
+                out.println("<tr>");
+                out.println("<td class='text-center'>" + p.getIdProducto() + "</td>");
                 out.println("<td>" + p.getNombre() + "</td>");
-                // Escribe la categoría del producto en una celda
                 out.println("<td>" + p.getCategoria() + "</td>");
-                // Escribe el precio del producto en una celda
-                out.println("<td>" + p.getPrecio() + "</td>");
-                // Cierra la fila de tabla del producto actual
+                if (usuario.isPresent()) {
+                    out.println("<td class='text-end'>$ " + String.format("%.2f", p.getPrecio()) + "</td>");
+                }
                 out.println("</tr>");
-            });
+            }
 
-            // CORRECCIÓN: Escribe la etiqueta de cierre del elemento table
+            out.println("</tbody>");
             out.println("</table>");
+            out.println("</div>");
 
-            // Escribe la etiqueta de cierre del elemento body
+            // Botón Regresar (redirige correctamente al inicio)
+            out.println("<div class='text-center mt-3'>");
+            out.println("<a href='" + req.getContextPath() + "/index.html' class='btn btn-outline-secondary'>Regresar al inicio</a>");
+            out.println("</div>");
+
+            // Mensaje y botones de sesión
+            out.println("<div class='mt-4 text-center'>");
+            if (usuario.isPresent()) {
+                out.println("<div class='alert alert-success' role='alert'>");
+                out.println("Bienvenido, <strong>" + usuario.get() + "</strong>.");
+                out.println("</div>");
+                out.println("<form action='" + req.getContextPath() + "/logout' method='post' style='display:inline;'>");
+                out.println("<button type='submit' class='btn btn-danger me-2'>Cerrar sesión</button>");
+                out.println("</form>");
+            } else {
+                out.println("<div class='alert alert-warning' role='alert'>");
+                out.println("Inicia sesión para ver los precios de los productos.");
+                out.println("</div>");
+                out.println("<a href='" + req.getContextPath() + "/login.jsp' class='btn btn-primary'>Iniciar sesión</a>");
+            }
+            out.println("</div>");
+
+            // Cierre de card y container
+            out.println("</div>");
+            out.println("</div>");
+            out.println("</div>");
+
+            // Script de Bootstrap
+            out.println("<script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'></script>");
             out.println("</body>");
-            // Escribe la etiqueta de cierre del elemento html
             out.println("</html>");
-
         }
     }
 }
-
-
